@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bmi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            padding: 0px;
+            margin: 0px;
+            display: flex;
+            flex-direction: column;
+            background-color: darkslategray;
+            font-family: Arial, Helvetica, sans-serif;
+            user-select: none;
+        }
+
+        /* 計算機本體設置 */
+        .calculate {
+            width: 400px;
+            height: 300px;
+            background-color: navajowhite;
+            border: 8px solid gold;
+            margin: 25px auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+        }
+
+        .calculate h1 {
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            color: aliceblue;
+            letter-spacing: 5px;
+            background-color: chocolate;
+        }
+
+        .calculate label,
+        input {
+            margin-top: 5px;
+            font-weight: bolder;
+
+        }
+
+        .calculate button {
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* 計算結果設置 */
+        .result-area {
+            width: 400px;
+            height: 180px;
+            background-color: navajowhite;
+            border: 8px solid gold;
+            margin: 5px auto;
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+        .result-area h2{
+            margin: 0;
+            text-align: center;
+            letter-spacing: 5px;
+            background-color: indianred;
+            color: #fff;
+        }
+        .result-area h3 {
+            margin: 0;
+            padding-left:10px ;
+            font-size: 16px;
+           
+        }
+
+        /* 表格設置 */
+
+        table{
+            width: 400px;
+            height: 150px;
+            background-color: navajowhite;
+            border: 8px solid gold;
+            text-align: start;
+            margin: 20px auto;
+
+        }
+        th{
+            font-size: 18px;
+            letter-spacing: 2px;
+            height: 35px;
+        }
+        table,td {  
+            border: 1px solid #333;
+        }
+        .td1{
+            text-align: center;
+            padding: 5px;
+            font-weight: bolder;
+        }
+        .td2{
+            padding: 5px;
+
+        }
+        thead,tfoot {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculate">
+        <h1>BMI計算器</h1>
+        <label for="height" >請輸入身高(cm)：</label>
+        <input type="text" id="height" placeholder="請輸入身高數值">
+        <label for="weight">請輸入體重(kg)：</label>
+        <input type="text" id="weight" placeholder="請輸入體重數值">
+        <button class="send" onclick="result()">開始計算</button>
+        <button class="clear" onclick="recalculate()">重新計算</button>
+    </div>
+    <div class="result-area">
+        <h2>BMI測量結果</h2>
+        <h3 class="result1"></h3>
+        <h3 class="result2"></h3>
+        <h3 class="result3"></h3>
+    </div>
+   <table class="bmi-table">
+    <thead>
+        <tr>
+            <th colspan="2">身體質量指數(BMI=kg/m2)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="td1">體重過輕</td>
+            <td class="td2">BMI ＜ 18.5</td>
+        </tr>
+        <tr>
+            <td class="td1">正常範圍</td>
+            <td class="td2">18.5 ≦ BMI＜24</td>
+        </tr>
+        <tr>
+            <td class="td1">異常範圍</td>
+            <td class="td2">
+                過　　重： 24≦ BMI＜27 <br>
+                輕度肥胖： 27≦ BMI＜30<br>
+                中度肥胖： 30≦ BMI＜35<br>
+                重度肥胖： BMI ≧35</td>
+        </tr>
+    </tbody>
+   </table>
+
+    </div>
+
+    <!-- JS -->
+    <script>
+        //誰:
+        // 輸入區
+        var h = document.querySelector('.calculate #height');//宣告身高變數=h
+        // console.log(h);
+        var w = document.querySelector('.calculate #weight');//宣告體重變數=w
+        // console.log(w);
+    
+        // 輸出結果區
+        var bmi = document.querySelector('.result-area .result1');//BMI結果
+        // console.log(bmi);
+        var level = document.querySelector('.result-area .result2');//BMI範圍
+        var advice = document.querySelector('.result-area .result3');//BMI建議
+
+        //什麼時候:當開始計算按鈕被點擊時
+        //執行事件:要計算bmi並回傳結果到結果區域
+
+        //事件:顯示計算結果
+        function result() {
+            let hv = h.value; //宣告身高值
+            let wv = w.value; //宣告體重值
+            // console.log(hv, wv); //確認是否抓取正確
+
+            let bmiresult = calbmi(hv, wv);//宣告計算BMI函式叫做bmiresult
+            bmi.textContent='';
+            level.textContent='';
+            advice.textContent='';
+            //狀況排除:先確認回傳的值是否是正確的
+            if (isNaN(parseInt(hv)) || isNaN(parseInt(wv))) {//若回傳的非數字或者是空值
+                alert('我只能吃數字,不要餵我吃奇怪的東西｡ﾟヽ(ﾟ´Д`)ﾉﾟ｡');
+            }else if (hv<=0 || hv>300 || wv<=0 ||wv>700) { //訂數字範圍,排除負值跟特大值
+                alert('娘子呀快跟牛魔王出來看上帝(((ﾟДﾟ;)))');   
+            }else if (bmiresult >= 204) { //bmi 204(含)以上
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);//顯示計算結果並取小數點後一碼
+                level.textContent='你知道嗎?目前世界上BMI最高紀錄保持者為沙烏地阿拉伯的Khalid Bin Mohsen Shaari,身高1.73m、體重610kg。目前測量結果顯示你已經超越他了!';
+                advice.textContent='這聽起來很不妙對吧?(；ﾟдﾟ)';
+            }
+            else if (bmiresult >= 35) { //bmi 35-203以上
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);//顯示計算結果並取小數點後一碼
+                level.textContent='異常範圍: 「重度肥胖」';
+                advice.textContent='建議：吃太多會被殺掉的ヽ(´ Д `)ﾉ 從不喝含糖飲料開始好嗎?';
+            }else if (bmiresult>=30){//bmi 30-34
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);
+                level.textContent='異常範圍:「中度肥胖」';
+                advice.textContent='建議：你是一塊五花肉ヽ(´ Д `)ﾉ 從不吃消夜開始好嗎?';
+            }else if (bmiresult>=27){//bmi 27-29
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);
+                level.textContent='異常範圍:「輕度肥胖」';
+                advice.textContent='建議：你是一塊不太肥的五花肉,從不吃零食開始好嗎?';
+            }else if (bmiresult>=24){//bmi 24-26
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);
+                level.textContent='異常範圍:「過重」';
+                advice.textContent='建議：你是一隻還算健康的海豹,但還是要注意管理體重喔!!';
+            }else if (bmiresult>=18.5){//bmi 18.5-23
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);
+                level.textContent='範圍:「正常範圍」';
+                advice.textContent='建議：很棒,繼續保持 d(`･∀･)b';
+            }else if(bmiresult>=1){//bmi 1-18.5
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1);
+                level.textContent='範圍:「體重過輕」';
+                advice.textContent='建議：台灣颱風很多,會被吹走的(´;ω;`) 可以多運動及均衡飲食來增加肌肉含量維持健康喔!';
+            }else{
+                bmi.textContent='您的BMI值為: '+bmiresult.toFixed(1)+'...?';
+                level.textContent='Σ(ﾟДﾟ；≡；ﾟдﾟ)你還活著嗎...?';
+            }
+
+            
+        }
+       
+        //建立bmi計算函式: BMI = 體重(公斤) / (身高(公尺) x 身高(公尺))
+        function calbmi(height, weight) {
+            height=height/100;
+            return (weight / (height * height));
+        }
+        // console.log(calbmi(150, 50));//測試公式是否正確
+       
+        //建立清空事件
+        function recalculate() {
+            bmi.textContent='';
+            level.textContent='';
+            advice.textContent='';
+        }
+
+    </script>
+
+</body>
+
+</html>
